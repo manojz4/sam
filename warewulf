@@ -12,3 +12,51 @@ systemctl stop firewalld.service
 systemctl disable firewalld.service
 systemctl status firewalld.service 
 init 6   (reboot)
+----
+vi /etc/warewulf/warewulf.conf  don,t put slash anywhere in ip
+
+    ipaddr: 192.168.253.160  # enter host-only ip 
+    netmask: 255.255.255.0
+    network: 192.168.253.0   # network of hostonly ip
+
+    dhcp:
+    enabled: true
+    range start: 192.168.253.190    # range for of hostonly ip start 
+    range end: 192.168.253.250      # range for of hostonly ip end
+    systemd name: dhcpd
+----
+wwctl configure --all sudo systemctl status dhcpd
+systemctl status tftp
+systemctl status nfs-server
+systemctl enable --now tftp 
+systemctl start tftp 
+systemctl enable --now warewulfd
+----
+
+wwctl server status
+wwctl container import docker://warewulf/rocky rocky-8
+wwctl container list
+sudo wwctl kernel list
+wwctl container import docker://registry.opensuse.org/science/warewulf/tumbleweed/containerfile/kernel:latest tw
+wwctl kernel import -DC tw
+wwctl node list -a
+--
+wwctl kernel list 
+wwctl node add --netdev ens37 --hwaddr 00:0c:29:FA:A6:17 --ipaddr 192.168.160.210 --netmask 255.255.255.0 n01 
+                  host  interface   mac address of nw machine     ip for nw machine                        name of machine
+----
+$ wwctl node list -a
+$ wwctl container exec rocky-8 /bin/bash
+> yum install passwd 
+> passwd root 
+    # set password for root
+> exit
+----
+wwctl node set --container rocky-8 n01
+wwctl node list -a
+----
+reload the other VM
+
+
+
+
