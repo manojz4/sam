@@ -57,6 +57,9 @@ wwctl node list -a
 ----
 reload the other VM
 
+login:root
+pass:cdac
+
 
 
 
