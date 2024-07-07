@@ -1,1 +1,14 @@
 config
+1) CREATE MASTER CENTOS 7 gui VM:- 4GB RAM, 2 PROCESSORS, 50GB HD, (TWO 
+ADAPTERS: NAT, HOST-ONLY) 
+2) CREATE BLANK VM:- 4GB RAM, 2 PROCESSORS, 50GB HD, 
+( ADAPTER: HOST-ONLY) 
+
+vi /etc/selinux/config
+disabled
+restart pc
+sestatus
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+systemctl status firewalld.service 
+init 6   (reboot)
