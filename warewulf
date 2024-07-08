@@ -13,6 +13,18 @@ systemctl disable firewalld.service
 systemctl status firewalld.service 
 init 6   (reboot)
 ----
+$ ip r
+> check your ip of hostonly and nat 
+
+in case of mirror error
+$ cd /etc/yum.repos.d/ &&  sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* $$ setenforce 0
+$ cd -
+
+$ yum install -y https://repo.ctrliq.com/rhel/8/ciq-release.rpm 
+$ yum install warewulf 
+---
+
+
 vi /etc/warewulf/warewulf.conf  don,t put slash anywhere in ip
 
     ipaddr: 192.168.253.160  # enter host-only ip 
