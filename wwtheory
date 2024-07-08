@@ -1,0 +1,34 @@
+ Warewulf
+Warewulf is an operating system provisioning platform for Linux that is designed to produce secure, scalable,
+turn key cluster deployments that maintain flexibility and simplicity.
+
+Since its initial release in 2001, Warewulf has become the most popular open source and vendor-agnostic provisioning 
+system within the global HPC community. Warewulf is known for its massive scalability and simple management of stateless (disk optional) provisioning
+
+Architecture:-
+One of the design tenants of Warewulf is how to scalably administrate many thousands of compute nodes. Generally 
+speaking, operating system state introduce a surface for potential discrepancies and version creep between nodes 
+and thus Warewulf has always gone with the "single system image" approach to clustered operating system management.
+This means that you can have a single management node "image". For the last 20 years, we've been calling this a 
+Virtual Node File System (VNFS), but in hindsight, this is a container.
+
+Features:-
+
+Lightweight: Warewulf provisions stateless operating system images and then gets out of the way. 
+There should be no underlying system dependencies or changes to the provisioned cluster node operating systems.
+
+Simple: Warewulf is used by hobbyists, researchers, scientists, engineers and systems administrators 
+because it is easy, lightweight, and simple.
+
+Flexible: Warewulf is highly flexible and can address the needs of any environment– from a computer
+lab with graphical workstations, to under-the-desk clusters, to massive supercomputing centers providing 
+traditional HPC capabilities to thousands of users.
+
+Agnostic: From the Linux distribution of choice to the underlying hardware, Warewulf is agnostic 
+and standards compliant. From ARM to x86, Atos to Dell, Debian, SUSE, Rocky, CentOS, and RHEL, Warewulf can do it all.
+
+Secure: Warewulf is the only stateless provisioning system that will support SELinux out of the box. 
+Just enable your node operating system container to support SELinux, and Warewulf do the rest!
+
+Open Source: For the last 20 years, Warewulf has remained open source and continues to be the golden
+standard for cluster provisioning.
