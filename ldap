@@ -1,0 +1,173 @@
+
+yum install openldap openldap-servers openldap-clients
+
+to check if installed
+master]# rpm -qa| grep openldap
+
+
+cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+cd /var/lib/ldap/
+
+
+change ownership
+chown ldap. /var/lib/ldap/DB_CONFIG
+
+
+restart
+systemctl start slapd
+systemctl enable slapd
+--
+change password
+slappasswd
+
+after this this password is generated
+{SSHA}ICNTDinzTg5t6PxC2eUL8PaqgTmm3qeO
+
+--
+open this file
+vi chrootpw.ldif
+--
+dn: olcDatabase={2}hdb, cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}ICNTDinzTg5t6PxC2eUL8PaqgTmm3qeO  (put previous generated password)
+
+--
+important schemas
+
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema//cosine.ldif
+shows thi is output
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+adding new entry "cn=cosine,cn=schema,cn=config"
+--
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema//nis.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema//inetorgperson.ldif
+--
+check each file by viewing
+nano /etc/openldap/schema//inetorgperson.ldif
+--
+Set domain name on ldap
+
+nano domain.ldif
+put this 
+--
+dn: olcDatabase={1}monitor,cn=config
+changetype: modify
+replace: olcAccess
+olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
+  read by dn.base="cn=Manager,dc=local,dc=com" read by * none
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc=local,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=Manager,dc=local,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}ICNTDinzTg5t6PxC2eUL8PaqgTmm3qeO
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,shadowLastChange by
+  dn="cn=Manager,dc=local,dc=com" write by anonymous auth by self write by * none
+olcAccess: {1}to dn.base="" by * read
+olcAccess: {2}to * by dn="cn=Manager,dc=local,dc=com" write by * read
+--
+to verify
+ldapmodify -Y EXTERNAL -H ldapi:/// -f domain.ldif
+
+--
+(such op is produced)
+
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+modifying entry "olcDatabase={1}monitor,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+-- 
+ nano basedomain.ldif
+
+ dn: dc=local,dc=com
+objectClass: top
+objectClass: dcObject
+objectclass: organization
+o: local com
+dc: local
+
+dn: cn=Manager,dc=local,dc=com
+objectClass: organizationalRole
+cn: Manager
+description: Directory Manager
+
+dn: ou=People,dc=local,dc=com
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Group,dc=local,dc=com
+objectClass: organizationalUnit
+ou: Group
+--
+ldapadd -x -D cn=Manager,dc=local,dc=com -W -f basedomain.ldif
+--
+output will be this
+
+Enter LDAP Password:
+adding new entry "dc=local,dc=com"
+
+adding new entry "cn=Manager,dc=local,dc=com"
+
+adding new entry "ou=People,dc=local,dc=com"
+
+adding new entry "ou=Group,dc=local,dc=com"
+---
+ create user
+ nano ldapuser.ldif
+# create new
+# replace to your own domain name for "dc=***,dc=***" section
+dn: uid=cent,ou=People,dc=local,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: Cent
+sn: Linux
+userPassword: {SSHA}ICNTDinzTg5t6PxC2eUL8PaqgTmm3qeO
+loginShell: /bin/bash
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/cent
+
+dn: cn=cent,ou=Group,dc=local,dc=com
+objectClass: posixGroup
+cn: Cent
+gidNumber: 1001
+memberUid: cent
+--
+ldapadd -x -D cn=Manager,dc=local,dc=com -W -f ldapuser.ldif
+--
+
+this will be the output
+
+Enter LDAP Password:
+adding new entry "uid=cent,ou=People,dc=local,dc=com"
+adding new entry "cn=cent,ou=Group,dc=local,dc=com"
+
+--
+
+Now go to Client
