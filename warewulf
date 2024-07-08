@@ -43,7 +43,9 @@ wwctl node list -a
 --
 wwctl kernel list 
 wwctl node add --netdev ens37 --hwaddr 00:0c:29:FA:A6:17 --ipaddr 192.168.160.210 --netmask 255.255.255.0 n01 
-                  host  interface   mac address of nw machine     ip for nw machine                        name of machine
+                  host  interface   mac address of nw machine     ip for setting             name of machine
+                                                                   new machine
+                                                                   range u provided b4
 ----
 $ wwctl node list -a
 $ wwctl container exec rocky-8 /bin/bash
